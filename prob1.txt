@@ -1,0 +1,95 @@
+n = 8, m = 5, S = 2, p_s = 1/2
+random vector b, l, q, s and matrix A size n x m
+
+binomial distribution Bin(10, 1/2)
+
+first stage: x?
+second stage: z y?
+
+set: i plant, j market
+
+data cho trc(parameter):
+a_i supply of commodity at plant i
+b_j demand for commodity at market j (in cases)
+c_ij = cost per unit of shipment between plant i and market j
+
+Decision Variables:
+x_ij = amount of commodity to ship from plant i to market j, x >= 0
+
+constraint:
+observe supply limit at plant i: sum(j, x_ij) <= a_i
+satisfy demand at market j: sum(i, x_ij) >= b_j
+objective func: min sum((i, j), c_ij * ij))
+
+data ngoài?
+
+Giải:
+- Container: m = Container()
+
+- Set:
+i = Set(container=m, name="i", description="plants", records=capacities.index)
+j = Set(container=m, name="j", description="markets", records=demand.index)
+
+- Parameter:
+a = Parameter(
+    container=m,
+    name="a",
+    domain=i,
+    description="supply of commodity at plant i (in cases)",
+    records=capacities.reset_index(),
+)
+
+b = Parameter(
+    container=m,
+    name="b",
+    domain=j,
+    description="demand for commodity at market j (in cases)",
+    records=demands.reset_index(),
+)
+
+c = Parameter(
+    container=m,
+    name="c",
+    domain=[i, j],
+    description="cost per unit of shipment between plant i and market j",
+)
+
+d = Parameter(
+    container=m,
+    name="d",
+    domain=[i, j],
+    description="distance between plant i and market j",
+    records=distances.reset_index(),
+)
+
+c[i, j] = freight_cost * d[i, j] / 1000
+
+-Variables:
+x = Variable(
+    container=m,
+    name="x",
+    domain=[i, j],
+    type="Positive",
+    description="amount of commodity to ship from plant i to market j",
+)
+
+-Equation:
+supply = Equation(
+    container=m, name="supply", domain=i, description="observe supply limit at plant i"
+)
+demand = Equation(
+    container=m, name="demand", domain=j, description="satisfy demand at market j"
+)
+
+-Objective:
+obj = Sum((i, j), c[i, j] * x[i, j])
+
+-Model:
+transport_2 = Model(
+    m,
+    name="transport2",
+    equations=m.getEquations(),
+    problem="LP",
+    sense=Sense.MIN,
+    objective=obj,
+)
