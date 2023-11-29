@@ -86,7 +86,9 @@ def write_file(path, sheet):
     df.to_excel(path, sheet_name=sheet)
 
 
+
 # main
 initial()
 # write_file('data.xlsx', sheet='data')
 print(edge[2].cal_new_capacity(4, scenario[0]))
+print(d)
