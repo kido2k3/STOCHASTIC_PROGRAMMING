@@ -2,9 +2,6 @@
 import pandas
 import random
 
-# local module
-import stage1
-import stage2
 # Global variables
 ARRAY_TO_RANDOM = [1/2, 1/3, 1/4, 1, 1.25, 1.5, 1.75]
 NUMBER_OF_CARS = 400
@@ -62,13 +59,30 @@ def initial():
     for i in range(NUMBER_OF_VARIABLES-2):
         d[i] = 0
     d[NUMBER_OF_VARIABLES - 1] = -NUMBER_OF_CARS
-    for i in range(3):
-        if i != 2:
-            edge.append(Edge(i, i+1))
-            edge.append(Edge(i+3, i+4))
-            edge.append(Edge(i+6, i+7))
-        edge.append(Edge(i, i+3))
-        edge.append(Edge(i+3, i+6))
+#     for i in range(3):
+#         if i != 2:
+#             edge.append(Edge(i, i+1))
+#             edge.append(Edge(i+3, i+4))
+#             edge.append(Edge(i+6, i+7))
+#         edge.append(Edge(i, i+3))
+#         edge.append(Edge(i+3, i+6))
+    edge.append(Edge(1, 2))
+    edge.append(Edge(1, 4))
+
+    edge.append(Edge(2, 3))
+    edge.append(Edge(2, 5))
+
+    edge.append(Edge(3, 6))
+
+    edge.append(Edge(4, 5))
+    edge.append(Edge(4, 7))
+
+    edge.append(Edge(5, 6))
+    edge.append(Edge(5, 8))
+
+    edge.append(Edge(6, 9))
+    edge.append(Edge(7, 8))
+    edge.append(Edge(8, 9))
 
     edge = sorted(edge, key=lambda x: x.vertex_from)
 
@@ -89,6 +103,10 @@ def write_file(path, sheet):
 
 # main
 initial()
-# write_file('data.xlsx', sheet='data')
-print(edge[2].cal_new_capacity(4, scenario[0]))
-print(d)
+# # write_file('data.xlsx', sheet='data')
+# for i in range(12):
+#     print(edge[i])
+
+# local module
+import stage1
+import stage2
