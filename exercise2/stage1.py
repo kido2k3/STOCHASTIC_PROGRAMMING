@@ -4,9 +4,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
 
-#Test voi so tui tu cho truoc
 #Extensions used: Juypter (search in VsCode)
-## Type "#%%" before place you want to start a code cell in Jupyter Notebook
+## Type "#%%" on top of the piece of code you want to run
 #############################
 
 #set plot attributes
@@ -87,11 +86,12 @@ nx.draw(G, pos=node_post, with_labels=True, font_color='red', node_size=800, nod
 nx.draw_networkx_edge_labels(G, pos=node_post, edge_labels=edge_capacity)
 
 # %%
-flowCost = nx.maximum_flow(G, 1, 9)[1]
-maxFlowCost = nx.cost_of_flow(G, flowCost)
+#Find feasible solution for max flow
+flowCost, flowPath = nx.maximum_flow(G, 1, 9)
+print(flowCost)
+print(flowPath)
 
 minCostFlow = nx.max_flow_min_cost(G, 1, 9)
 minCost = nx.cost_of_flow(G, minCostFlow)
 print("Min cost value:"+str(minCost))
-print(maxFlowCost)
 # %%
