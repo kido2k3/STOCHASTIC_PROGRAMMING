@@ -20,15 +20,19 @@ class Edge:
     def cal_new_capacity(self, time, scenario):
         if scenario == 'scenario1':
             seed = 34
-        else:
+        elif scenario == "scenario2":
             seed = 23
+        else: 
+            seed = 17
         return (self.capacity + time)*seed % 400
 
     def cal_new_travel_time(self, time, scenario):
         if scenario == 'scenario1':
             seed = 34
-        else:
+        elif scenario == "scenario2":
             seed = 23
+        else: 
+            seed = 17
         return (self.penalty + time)*seed % 30
 
     def __repr__(self):
@@ -40,7 +44,7 @@ TIME_LENGTH = 150
 TIME_THRESHOLD = 25
 d = [0]*NUMBER_OF_VARIABLES
 edge = []
-scenario = ['scenario1', 'scenario2']
+scenario = ['scenario1', 'scenario2', 'scenario3']
 
 random.seed(40)
 columns = ['penalty of flows', 'demand of nodes']
@@ -98,6 +102,7 @@ retval: none
 def write_file(path, sheet):
     df = pandas.DataFrame(list(zip(p, d)), columns=columns)
     df.to_excel(path, sheet_name=sheet)
+    
 
 
 

@@ -93,11 +93,16 @@ nx.draw_networkx_edge_labels(G, pos=node_post, edge_labels=edge_capacity)
 #%%
 #Find feasible solution for max flow
 from networkx.algorithms.flow import edmonds_karp
-flowCost, flowPath = nx.maximum_flow(G, 1, 9, flow_func=edmonds_karp)
+flowCost, flowPath = nx.maximum_flow(G, 1, 9, flow_func = edmonds_karp)
 print(flowCost)
 for node in flowPath: 
     print(str(node) + "->" + str(flowPath[node]))
 
+
+#nx.draw(G, pos=node_post, with_labels=True, font_color='red', node_size=800, node_color=node_colors)
+#nx.draw_networkx_edge_labels(G, pos=node_post, edge_labels=)
 minCostFlow = nx.max_flow_min_cost(G, 1, 9)
 minCost = nx.cost_of_flow(G, minCostFlow)
 print("Min cost value: "+str(minCost))
+
+# %%
