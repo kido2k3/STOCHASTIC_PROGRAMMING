@@ -38,6 +38,7 @@ def init():
     G = nx.DiGraph() # Create a graph with 0 node
     #Create node
     G.add_node(1, demand=-MAIN.NUMBER_OF_CARS, color="#c53d46")
+    # G.add_node(1, demand=-100, color="#c53d46")
     G.add_node(2, demand=0, color="#fff8b6")
     G.add_node(3, demand=0, color="#fff8b6")
     G.add_node(4, demand=0, color="#fff8b6")
@@ -45,29 +46,30 @@ def init():
     G.add_node(6, demand=0, color="#fff8b6")
     G.add_node(7, demand=0, color="#fff8b6")
     G.add_node(8, demand=0, color="#fff8b6")
+    # G.add_node(9, demand=100, color="#b0e0e6")
     G.add_node(9, demand=MAIN.NUMBER_OF_CARS, color="#b0e0e6")
 
     #Create link between each node according to sample graph
     for i in range(MAIN.NUMBER_OF_EDGES):
         G.add_edge(MAIN.edge[i].vertex_from, MAIN.edge[i].vertex_to, weight=MAIN.edge[i].penalty, capacity=MAIN.edge[i].capacity, flow = 0)
 
-    # G.add_edge(1, 2, weight=2, capacity=50)
-    # G.add_edge(1, 4, weight=2, capacity=100)
+    # G.add_edge(1, 2, weight=7, capacity=50, flow=0)
+    # G.add_edge(1, 4, weight=1, capacity=100, flow=0)
 
-    # G.add_edge(2, 3, weight=2, capacity=20)
-    # G.add_edge(2, 5, weight=2, capacity=30)
+    # G.add_edge(2, 3, weight=4, capacity=20, flow=0)
+    # G.add_edge(2, 5, weight=6, capacity=30, flow=0)
 
-    # G.add_edge(3, 6, weight=2, capacity=50)
+    # G.add_edge(3, 6, weight=1, capacity=50, flow=0)
 
-    # G.add_edge(4, 5, weight=2, capacity=30)
-    # G.add_edge(4, 7, weight=2, capacity=50)
+    # G.add_edge(4, 5, weight=3, capacity=30, flow=0)
+    # G.add_edge(4, 7, weight=2, capacity=50, flow=0)
 
-    # G.add_edge(5, 8, weight=2, capacity=120)
-    # G.add_edge(5, 6, weight=2, capacity=30)
+    # G.add_edge(5, 6, weight=7, capacity=30, flow=0)
+    # G.add_edge(5, 8, weight=3, capacity=120, flow=0)
 
-    # G.add_edge(6, 9, weight=2, capacity=100)
-    # G.add_edge(7, 8, weight=2, capacity=70)
-    # G.add_edge(8, 9, weight=2, capacity=120)
+    # G.add_edge(6, 9, weight=5, capacity=100, flow=0)
+    # G.add_edge(7, 8, weight=3, capacity=70, flow=0)
+    # G.add_edge(8, 9, weight=4, capacity=120, flow=0)
 
 
     #Plot the graph
@@ -99,7 +101,7 @@ def updateGraph(G, edge, attribute, value):
 #Initialize and draw a graph
 G, node_post = init()
 drawGraph(G, node_post)
-# %%
+#%%
 #Find optimal solution for max flow
 flowCost, flowDict = calculate(G)
 for node in flowDict:

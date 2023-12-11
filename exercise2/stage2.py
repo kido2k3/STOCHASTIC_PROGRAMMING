@@ -35,28 +35,43 @@ Sample graph:
 '''
 
 # The time before threshold
-node_after_safe = []
+node_after_safe = []   #List of node use for temp source
 safe_time = st1.MAIN.TIME_THRESHOLD
+total_safe_flow = 0    #Go for plan stage 1 before time threshold
+print(st1.flowDict)
 
 def dfs_safe_path(node, time):
     for i in range(st1.MAIN.NUMBER_OF_EDGES):
-        if st1.MAIN.edge[i].vertex_from == node: 
-            if((st1.flowDict.get(st1.MAIN.edge[i].vertex_from)).get(st1.MAIN.edge[i].vertex_to)) != 0:
+        global total_safe_flow
+        if st1.MAIN.edge[i].vertex_from == node:
+            plan_flow = (st1.flowDict.get(st1.MAIN.edge[i].vertex_from)).get(st1.MAIN.edge[i].vertex_to)
+            if(plan_flow) != 0:
+                total_safe_flow = total_safe_flow + plan_flow * st1.MAIN.edge[i].penalty
                 time = time + st1.MAIN.edge[i].penalty
-                if time >= safe_time: 
-                    print(time)
-                    node_after_safe.append(st1.MAIN.edge[i].vertex_to)
-                    time = time - st1.MAIN.edge[i].penalty
+                print("Node to: " + str(st1.MAIN.edge[i].vertex_to))
+                print(time)
+                if(st1.MAIN.edge[i].vertex_to != 9):
+                    if time >= safe_time: 
+                        print("Threshold reach! Return to Node: " + str(st1.MAIN.edge[i].vertex_from))
+                        node_data = {
+                            "Code" : st1.MAIN.edge[i].vertex_to,
+                            "Time" : time,
+                            "Demand" : plan_flow
+                        }
+                        node_after_safe.append(node_data)
+                    else: 
+                        dfs_safe_path(st1.MAIN.edge[i].vertex_to, time)
                 else: 
-                    print(st1.MAIN.edge[i].vertex_to)
-                    print(time)
-                    dfs_safe_path(st1.MAIN.edge[i].vertex_to, time)
-                    time = time - st1.MAIN.edge[i].penalty
+                    print("Flow reach sink!")
+                    print("Amount of flow reached sink: " + str(plan_flow))
+                time = time - st1.MAIN.edge[i].penalty
+                    
         else: 
             continue
     return
 
 dfs_safe_path(1, 0)
+print("Total flow before reach threshold: " + str(total_safe_flow))
 print(node_after_safe)
     
 
@@ -67,6 +82,4 @@ print(node_after_safe)
 # demand = MAIN.d
 
 # def Fold_Fulkerson(node, edge, time, demand):
-    
-
 # %%

@@ -8,6 +8,12 @@ NUMBER_OF_CARS = 400
 
 
 class Edge:
+    # def __init__(self, vertex_from, vertex_to, time, capacity):
+    #     self.vertex_from = vertex_from
+    #     self.vertex_to = vertex_to
+    #     self.penalty = time
+    #     self.capacity = capacity
+
     def __init__(self, vertex_from, vertex_to):
         self.vertex_from = vertex_from
         self.vertex_to = vertex_to
@@ -65,13 +71,25 @@ def initial():
     for i in range(NUMBER_OF_VARIABLES-2):
         d[i] = 0
     d[NUMBER_OF_VARIABLES - 1] = -NUMBER_OF_CARS
-#     for i in range(3):
-#         if i != 2:
-#             edge.append(Edge(i, i+1))
-#             edge.append(Edge(i+3, i+4))
-#             edge.append(Edge(i+6, i+7))
-#         edge.append(Edge(i, i+3))
-#         edge.append(Edge(i+3, i+6))
+
+    # edge.append(Edge(1, 2, 7, 50))
+    # edge.append(Edge(1, 4, 1, 100))
+
+    # edge.append(Edge(2, 3, 4, 20))
+    # edge.append(Edge(2, 5, 6, 30))
+
+    # edge.append(Edge(3, 6, 1, 50))
+
+    # edge.append(Edge(4, 5, 3, 30))
+    # edge.append(Edge(4, 7, 2, 50))
+
+    # edge.append(Edge(5, 6, 7, 30))
+    # edge.append(Edge(5, 8, 3, 120))
+
+    # edge.append(Edge(6, 9, 5, 100))
+    # edge.append(Edge(7, 8, 5, 70))
+    # edge.append(Edge(8, 9, 4, 120))
+
     edge.append(Edge(1, 2))
     edge.append(Edge(1, 4))
 
