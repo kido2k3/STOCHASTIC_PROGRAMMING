@@ -40,14 +40,16 @@ class Edge:
 
 
 NUMBER_OF_VARIABLES = 9
+NUMBER_OF_EDGES = 12
 TIME_LENGTH = 150
 TIME_THRESHOLD = 25
 d = [0]*NUMBER_OF_VARIABLES
+p = [0]*NUMBER_OF_EDGES
 edge = []
 scenario = ['scenario1', 'scenario2', 'scenario3']
 
 random.seed(40)
-columns = ['penalty of flows', 'demand of nodes']
+columns = ['nodes', 'penalty of flows', 'demand of nodes', ]
 # function
 '''
 brief: initial all parameters in the objective function and constraints
@@ -57,7 +59,7 @@ retval: none
 
 
 def initial():
-    global p, d, edge
+    global d, edge, p
 
     d[0] = NUMBER_OF_CARS
     for i in range(NUMBER_OF_VARIABLES-2):
@@ -88,6 +90,9 @@ def initial():
     edge.append(Edge(7, 8))
     edge.append(Edge(8, 9))
 
+    for i in range(len(edge)):
+        p[i] = edge[i].penalty
+
     edge = sorted(edge, key=lambda x: x.vertex_from)
 
 
@@ -100,15 +105,13 @@ retval: none
 
 
 def write_file(path, sheet):
-    df = pandas.DataFrame(list(zip(p, d)), columns=columns)
+    df = pandas.DataFrame(list(zip(edge, p, d)), columns=columns)
     df.to_excel(path, sheet_name=sheet)
-    
-
-
 
 # main
 initial()
-# # write_file('data.xlsx', sheet='data')
+write_file('data.xlsx', sheet='data')
+print(edge)
 # for i in range(12):
 #     print(edge[i])
 
