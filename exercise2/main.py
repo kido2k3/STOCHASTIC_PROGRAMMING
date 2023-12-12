@@ -23,12 +23,15 @@ class Edge:
         self.x = 0
         self.y = 0
 
-    def cal_new_capacity(self, time, scenario):
+    def cal_new_capacity(self, time, scenario, demand):
         if scenario == 'scenario1':
             seed = 34
         else: 
             seed = 22
-        return (self.capacity + time)*seed % 400
+        var = (self.capacity + time)*seed % 400
+        while(var < demand): 
+            var = var * 2 + demand
+        return var
 
     def cal_new_travel_time(self, time, scenario):
         if scenario == 'scenario1':
@@ -44,13 +47,23 @@ class Edge:
 NUMBER_OF_VARIABLES = 9
 NUMBER_OF_EDGES = 12
 TIME_LENGTH = 150
-TIME_THRESHOLD = 25
+TIME_THRESHOLD = 10
 d = [0]*NUMBER_OF_VARIABLES
 p = [0]*NUMBER_OF_EDGES
 edge = []
 scenario = ['scenario1', 'scenario2']
 
-random.seed(40)
+# random.seed(10)  # Testcase $1
+# random.seed(25)  # Testcase $2
+# random.seed(30)  # Testcase $3
+random.seed(40)  # Testcase $4
+# random.seed(52)  # Testcase $5
+# random.seed(68)  # Testcase $6
+# random.seed(73)  # Testcase $7
+# random.seed(85)  # Testcase $8
+# random.seed(91)  # Testcase $9
+# random.seed(150) # Testcase $10
+
 columns = ['nodes', 'penalty of flows', 'demand of nodes', ]
 # function
 '''

@@ -115,28 +115,26 @@ for i in range(st1.MAIN.NUMBER_OF_VARIABLES - 1):
 st1.G.nodes[1]["demand"] = 0
 st1.G.nodes[9]["demand"] = st1.G.nodes[9]["demand"] - node_data[8]["Car_amount"]
 
-print(st1.G.nodes[0]["demand"])
-print(st1.G.nodes[1]["demand"])
-print(st1.G.nodes[9]["demand"])
+# print(st1.G.nodes[0]["demand"])
+# print(st1.G.nodes[1]["demand"])
+# print(st1.G.nodes[9]["demand"])
 
 #Change edge data
 egde_of_G = [st1.G.edges[1, 2], st1.G.edges[1, 4], st1.G.edges[2, 3], st1.G.edges[2, 5], st1.G.edges[3, 6], st1.G.edges[4, 5],
              st1.G.edges[4, 7], st1.G.edges[5, 6], st1.G.edges[5, 8], st1.G.edges[6, 9], st1.G.edges[7, 8], st1.G.edges[8, 9]]
 min_scenario_cost = []
 
-# cost, dict = st1.calculate(st1.G)
-# print(cost)
-# print(dict)
-
 #Calculate the min cost when cars move after threshold in each scenario
 for i in range(len(st1.MAIN.scenario)):
     for j in range(st1.MAIN.NUMBER_OF_EDGES):
         #Change attribute for edge after threshold for each scenario
         egde_of_G[j]["weight"] = st1.MAIN.edge[j].cal_new_travel_time(variation_time, st1.MAIN.scenario[i])
-        egde_of_G[j]["capacity"] = st1.MAIN.edge[j].cal_new_capacity(variation_time, st1.MAIN.scenario[i])
+        egde_of_G[j]["capacity"] = st1.MAIN.edge[j].cal_new_capacity(variation_time, st1.MAIN.scenario[i], cars_remain / 2)
+        print("Capacity of " + str(st1.MAIN.edge[j].vertex_from) + " -> " + str(st1.MAIN.edge[j].vertex_to) + ": " + str(egde_of_G[j]["capacity"]))
     #Calculate the min_cost for each scenario
     cost, dict = st1.calculate(st1.G)
     st1.drawGraph(st1.G, st1.node_post)
+    print(dict)
     print("Cost of part after time threshold in scenario " + str(i + 1) + ": " + str(cost))
     min_scenario_cost.append(cost)
 
