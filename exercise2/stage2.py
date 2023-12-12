@@ -141,7 +141,7 @@ for i in range(len(st1.MAIN.scenario)):
     min_scenario_cost.append(cost)
 
 #Calculate the average min cost when cars move after threshold
-scenario_rate = [0.3, 0.4, 0.3]
+scenario_rate = [0.5, 0.5]
 total_after_flow = 0
 for i in range(len(st1.MAIN.scenario)):
     total_after_flow = total_after_flow + scenario_rate[i]*min_scenario_cost[i] 

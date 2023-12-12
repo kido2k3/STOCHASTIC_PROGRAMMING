@@ -26,19 +26,15 @@ class Edge:
     def cal_new_capacity(self, time, scenario):
         if scenario == 'scenario1':
             seed = 34
-        elif scenario == "scenario2":
-            seed = 23
         else: 
-            seed = 17
+            seed = 22
         return (self.capacity + time)*seed % 400
 
     def cal_new_travel_time(self, time, scenario):
         if scenario == 'scenario1':
             seed = 34
-        elif scenario == "scenario2":
-            seed = 23
         else: 
-            seed = 17
+            seed = 22
         return (self.penalty + time)*seed % 30
 
     def __repr__(self):
@@ -52,7 +48,7 @@ TIME_THRESHOLD = 25
 d = [0]*NUMBER_OF_VARIABLES
 p = [0]*NUMBER_OF_EDGES
 edge = []
-scenario = ['scenario1', 'scenario2', 'scenario3']
+scenario = ['scenario1', 'scenario2']
 
 random.seed(40)
 columns = ['nodes', 'penalty of flows', 'demand of nodes', ]
