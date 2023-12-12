@@ -1,29 +1,6 @@
 #%%
-import stage1 as st1 
-
-egde_of_G = [st1.G.edges[1, 2], st1.G.edges[1, 4], st1.G.edges[2, 3], st1.G.edges[2, 5], st1.G.edges[3, 6], st1.G.edges[4, 5],
-             st1.G.edges[4, 7], st1.G.edges[5, 6], st1.G.edges[5, 8], st1.G.edges[6, 9], st1.G.edges[7, 8], st1.G.edges[8, 9]]
-# min_scenario_cost = []
-
-# for i in range(3):
-#     for j in range(st1.G.number_of_edges()):
-#         #Change attribute for edge after threshold for each scenario
-#         egde_of_G[j]["weight"] = st1.MAIN.edge[0].cal_new_travel_time(st1.MAIN.TIME_THRESHOLD, st1.MAIN.scenario[i])
-#         egde_of_G[j]["capacity"] = st1.MAIN.edge[0].cal_new_capacity(st1.MAIN.TIME_THRESHOLD, st1.MAIN.scenario[i])
-#     #Calculate the min_cost for each scenario
-#     minCostFlow = st1.nx.max_flow_min_cost(st1.G, 1, 9)
-#     minCost = st1.nx.cost_of_flow(st1.G, minCostFlow)
-#     min_scenario_cost.append(minCost)
-
-# scenario_rate = [0.3, 0.4, 0.3]
-# total_min_cost_2 = 0
-# for i in range(3):
-#     total_min_cost_2 = total_min_cost_2 + scenario_rate[i]*min_scenario_cost[i] 
-# print("Min cost value after time threshold = " + str(total_min_cost_2))
-# # %%
-# print("Total min cost of two stage: " + str(total_min_cost_2 + st1.minCost))
-# %%
 # import main as MAIN
+import stage1 as st1 
 
 '''
 Sample graph: 
@@ -34,6 +11,7 @@ Sample graph:
 7--->8--->9
 '''
 
+#Handle cost before time threshold
 #Set data for nodes
 node_data = []
 for i in range(st1.MAIN.NUMBER_OF_VARIABLES):
@@ -92,6 +70,7 @@ def dfs_safe_path(node, time):
                 else: 
                     print("Flow reach sink!")
                     print("Amount of flow reached sink: " + str(node_data[node_index(st1.MAIN.edge[i].vertex_to)]["Car_amount"]))
+                    node_after_safe.append(node_data[node_index(st1.MAIN.edge[i].vertex_to)])
                 time = time - st1.MAIN.edge[i].penalty     
         else: 
             continue
@@ -116,3 +95,61 @@ for i in range(st1.MAIN.NUMBER_OF_VARIABLES - 1):
     if node_data[i]["Car_amount"] > 0:
         node_after_safe.append(node_data[i])
 print(node_after_safe)
+
+#%%
+#Handle cost after time threshold
+#Create a temp super source to include all nodes which have cars
+cars_remain = 0
+for i in range(st1.MAIN.NUMBER_OF_VARIABLES - 1):
+    if node_data[i]["Car_amount"] > 0:
+        cars_remain = cars_remain + node_data[i]["Car_amount"]
+
+st1.G.add_node(0, demand=-cars_remain, color="#ffff00") #Node temp(Code: 0)
+st1.node_post[0] = (1/2, 1/2) #Node position
+for i in range(st1.MAIN.NUMBER_OF_VARIABLES - 1):
+    if node_data[i]["Car_amount"] > 0:
+        st1.G.add_edge(0, node_data[i]["Code"], weight = 0, capacity = node_data[i]["Car_amount"], flow = 0)
+
+#Change data after time threshold through scenario
+#Change node data
+st1.G.nodes[1]["demand"] = 0
+st1.G.nodes[9]["demand"] = st1.G.nodes[9]["demand"] - node_data[8]["Car_amount"]
+
+print(st1.G.nodes[0]["demand"])
+print(st1.G.nodes[1]["demand"])
+print(st1.G.nodes[9]["demand"])
+
+#Change edge data
+egde_of_G = [st1.G.edges[1, 2], st1.G.edges[1, 4], st1.G.edges[2, 3], st1.G.edges[2, 5], st1.G.edges[3, 6], st1.G.edges[4, 5],
+             st1.G.edges[4, 7], st1.G.edges[5, 6], st1.G.edges[5, 8], st1.G.edges[6, 9], st1.G.edges[7, 8], st1.G.edges[8, 9]]
+min_scenario_cost = []
+
+# cost, dict = st1.calculate(st1.G)
+# print(cost)
+# print(dict)
+
+#Calculate the min cost when cars move after threshold in each scenario
+for i in range(len(st1.MAIN.scenario)):
+    for j in range(st1.MAIN.NUMBER_OF_EDGES):
+        #Change attribute for edge after threshold for each scenario
+        egde_of_G[j]["weight"] = st1.MAIN.edge[j].cal_new_travel_time(variation_time, st1.MAIN.scenario[i])
+        egde_of_G[j]["capacity"] = st1.MAIN.edge[j].cal_new_capacity(variation_time, st1.MAIN.scenario[i])
+    #Calculate the min_cost for each scenario
+    cost, dict = st1.calculate(st1.G)
+    st1.drawGraph(st1.G, st1.node_post)
+    print("Cost of part after time threshold in scenario " + str(i + 1) + ": " + str(cost))
+    min_scenario_cost.append(cost)
+
+#Calculate the average min cost when cars move after threshold
+scenario_rate = [0.3, 0.4, 0.3]
+total_after_flow = 0
+for i in range(len(st1.MAIN.scenario)):
+    total_after_flow = total_after_flow + scenario_rate[i]*min_scenario_cost[i] 
+print("Min cost value after time threshold through several scenarios: " + str(total_after_flow))
+
+#%%
+#Total min cost in subploblem 2 and draw graph
+print("Total min cost of two stage: " + str(total_safe_flow + total_after_flow))
+st1.drawGraph(st1.G, st1.node_post)
+
+# %%

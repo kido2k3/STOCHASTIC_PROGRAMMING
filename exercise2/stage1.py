@@ -71,7 +71,6 @@ def init():
     # G.add_edge(7, 8, weight=3, capacity=70, flow=0)
     # G.add_edge(8, 9, weight=4, capacity=120, flow=0)
 
-
     #Plot the graph
     node_post = {
         1: (-1, 1),
@@ -108,4 +107,4 @@ for node in flowDict:
     print(str(node) + "->" + str(flowDict[node]))
 print("Cost of flow: " + str(flowCost))
 print("---------------------------------------------")
-# %%
+
