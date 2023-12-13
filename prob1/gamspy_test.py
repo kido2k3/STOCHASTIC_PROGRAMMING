@@ -17,6 +17,8 @@ l = np.random.uniform(5, 10**9, n)  # Vector l
 q = np.random.uniform(10, 10**8, n)  # Vector q
 s = np.random.uniform(1, 10**9, m)  # Vector s
 
+x = np.random.randint(100, 1000, m)
+
 # Assumed bounds for decision variables z, you need to provide this based on your scenario
 d1 = stats.binom.rvs(10, 0.5, size=n)
 d2 = stats.binom.rvs(10, 0.5, size=n, random_state = 1)
@@ -40,29 +42,32 @@ def gams():
     d1_param = ct.addParameter('d1', i, d1)
     d2_param = ct.addParameter('d2', i, d2)
 
+    x_param = ct.addParameter('x', j, x)
 
     # Create variable
-    x = gms.Variable(container=ct, name="x", domain=j, type="Positive", description="the numbers of parts to be ordered before production")
+    # x = gms.Variable(container=ct, name="x", domain=j, type="Positive", description="the numbers of parts to be ordered before production")
     y1 = gms.Variable(container=ct, name="y1", domain=j, type="Positive", description="the number of parts left in inventory for s1")
     z1 = gms.Variable(container=ct, name="z1", domain=i, type="Positive", description="the number of units produced for s1")
     y2 = gms.Variable(container=ct, name="y2", domain=j, type="Positive", description="the number of parts left in inventory for s2")
     z2 = gms.Variable(container=ct, name="z2", domain=i, type="Positive", description="the number of units produced for s2")
 
     # Define equation 
-    e1 = gms.Equation(container=ct, name="first_stage", domain=j)
+    # e1 = gms.Equation(container=ct, name="first_stage", domain=j)
     e2 = gms.Equation(container=ct, name="units_produced_s1", domain=i, description="range of units produced of product i for s1")
     e3 = gms.Equation(container=ct, name="parts_left_s1", domain=j, description="number of parts left for s1")
     e4 = gms.Equation(container=ct, name="units_produced_s2", domain=i, description="range of units produced of product i for s2")
     e5 = gms.Equation(container=ct, name="parts_left_s2", domain=j, description="number of parts left for s2")
 
-    e1[j] = gms.Sum(i, A_param[i, j] * x[j]) == b_param[j]
+    # e1[j] = gms.Sum(i, A_param[i, j] * x[j]) == b_param[j]
+    # e1[j] = x[j] >= gms.Sum(i, A_param[i, j] * z1[i]) or x[j] >= gms.Sum(i, A_param[i, j] * z2[i])
+    # e1[j] = x[j] >= 0
     e2[i] = z1[i] <= d1_param[i] 
-    e3[j] = y1[j] == x[j] - gms.Sum(i, A_param[i, j] * z1[i])
+    e3[j] = y1[j] == x_param[j] - gms.Sum(i, A_param[i, j] * z1[i])
     e4[i] = z2[i] <= d2_param[i]
-    e5[j] = y2[j] == x[j] - gms.Sum(i, A_param[i, j] * z2[i])
+    e5[j] = y2[j] == x_param[j] - gms.Sum(i, A_param[i, j] * z2[i])
 
     #Define objective
-    obj = gms.Sum(j, b_param[j] * x[j]) + 1/2 * gms.Sum(i, (l_param[i] - q_param[i]) * z1[i]) - gms.Sum(j, s_param[j] * y1[j]) + 1/2 * gms.Sum(i, (l_param[i] - q_param[i]) * z2[i]) - gms.Sum(j, s_param[j] * y2[j])
+    obj = gms.Sum(j, b_param[j] * x_param[j]) + 1/2 * gms.Sum(i, (l_param[i] - q_param[i]) * z1[i]) - gms.Sum(j, s_param[j] * y1[j]) + 1/2 * gms.Sum(i, (l_param[i] - q_param[i]) * z2[i]) - gms.Sum(j, s_param[j] * y2[j])
     #Define model
     transport = gms.Model(container=ct, name="transport", equations=ct.getEquations(), problem="LP", sense=gms.Sense.MIN, objective=obj)
 
@@ -70,7 +75,7 @@ def gams():
 
     #Output
     print("Số phần được đặt trước khi sản xuất (x)")
-    print(x.records)
+    print(x_param.records)
     print("\n")
 
     print("Số phần tồn kho trong scenario 1 (y1)")
@@ -97,16 +102,16 @@ def ortool():
     solver = pyw.Solver.CreateSolver('GLOP')
 
     # Create variables
-    x = [solver.NumVar(0, solver.infinity(), 'x[{}]'.format(j)) for j in range(m)]
+    # x = [solver.NumVar(0, solver.infinity(), 'x[{}]'.format(j)) for j in range(m)]
     y1 = [solver.NumVar(0, solver.infinity(), 'y1[{}]'.format(j)) for j in range(m)]
     z1 = [solver.NumVar(0, solver.infinity(), 'z1[{}]'.format(i)) for i in range(n)]
     y2 = [solver.NumVar(0, solver.infinity(), 'y2[{}]'.format(j)) for j in range(m)]
     z2 = [solver.NumVar(0, solver.infinity(), 'z2[{}]'.format(i)) for i in range(n)]
 
     # Create constraints
-    for j in range(m):
-        constraint_expr = [A[i][j] * x[j] for i in range(n)]
-        solver.Add(sum(constraint_expr) == b[j])
+    # for j in range(m):
+    #     constraint_expr = [A[i][j] * x[j] for i in range(n)]
+    #     solver.Add(sum(constraint_expr) == b[j])
 
     for i in range(n):
         solver.Add(z1[i] <= d1[i])
@@ -117,8 +122,8 @@ def ortool():
 
     # Define objective function
     objective = solver.Objective()
-    for j in range(m):
-        objective.SetCoefficient(x[j], b[j])
+    # for j in range(m):
+    #     objective.SetCoefficient(x[j], b[j])
     for i in range(n):
         objective.SetCoefficient(z1[i], (l[i] - q[i]) / 2)
         objective.SetCoefficient(z2[i], (l[i] - q[i]) / 2)
@@ -130,12 +135,17 @@ def ortool():
     # Solve the problem
     solver.Solve()
 
-    # Output
-    print("Objective value =", solver.Objective().Value())
+    obj = solver.Objective().Value()
 
-    print("Số phần được đặt trước khi sản xuất (x)")
     for j in range(m):
-        print('x[{}] = {}'.format(j, x[j].solution_value()))
+        obj = obj + b[j] * x[j]
+
+    # Output
+    print("Objective value =", obj)
+
+    # print("Số phần được đặt trước khi sản xuất (x)")
+    # # for j in range(m):
+    # #     print('x[{}] = {}'.format(j, x[j].solution_value()))
     print()
 
     print("Số phần tồn kho trong scenario 1 (y1)")
